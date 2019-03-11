@@ -10,7 +10,7 @@ services:
       - "443:443"   # The HTTPS port
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
-      - ./docker-volume/traefik/acme.json:/etc/acme.json
+      - ./docker-volumes/traefik/acme.json:/etc/acme.json
       - ./traefik.toml:/traefik.toml
     restart: "always"
     # If you want to use the Traefik dashboard, you should expose it on a 
@@ -27,8 +27,8 @@ services:
       traefik.frontend.rule: "Host:${PEERTUBE_WEBSERVER_HOSTNAME}"
       traefik.port: "9000"
     volumes:
-      - ./docker-volume/data:/data
-      - ./docker-volume/config:/config
+      - ./docker-volumes/data:/data
+      - ./docker-volumes/config:/config
     depends_on:
       - postgres
       - redis
@@ -42,7 +42,7 @@ services:
       POSTGRES_PASSWORD: ${PEERTUBE_DB_PASSWORD}
       POSTGRES_DB: peertube
     volumes:
-      - ./docker-volume/db:/var/lib/postgresql/data
+      - ./docker-volumes/db:/var/lib/postgresql/data
     restart: "always"
     labels:
       traefik.enable: "false"
@@ -50,7 +50,7 @@ services:
   redis:
     image: redis:5-alpine
     volumes:
-      - ./docker-volume/redis:/data
+      - ./docker-volumes/redis:/data
     restart: "always"
     labels:
       - "traefik.enable=false"
