@@ -39,8 +39,8 @@ services:
   postgres:
     image: postgres:10-alpine
     environment:
-      POSTGRES_USER: ${PEERTUBE_DB_USERNAME}
-      POSTGRES_PASSWORD: ${PEERTUBE_DB_PASSWORD}
+#      POSTGRES_USER: ${PEERTUBE_DB_USERNAME}
+#      POSTGRES_PASSWORD: ${PEERTUBE_DB_PASSWORD}
       POSTGRES_DB: peertube
     volumes:
       - ./volumes/db:/var/lib/postgresql/data

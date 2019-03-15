@@ -17,6 +17,8 @@ function sync-volumes {
     rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/torrents/" "$NEW_BASE_FOLDER/data/torrents/"
     rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:/var/lib/postgresql/10/main/" "$NEW_BASE_FOLDER/db/"
     cp db_config/* "$NEW_BASE_FOLDER/db/"
+    chown 70:115 volumes/db/ -R
+    chown 999:999 volumes/data/ -R
 }
 
 if [ "$(whoami)" != "root" ]; then
