@@ -15,6 +15,7 @@ function sync-volumes {
     rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/previews/" "$NEW_BASE_FOLDER/data/previews/"
     rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/thumbnails/" "$NEW_BASE_FOLDER/data/thumbnails/"
     rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/torrents/" "$NEW_BASE_FOLDER/data/torrents/"
+    rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:/var/lib/postgresql/10/main/" "$NEW_BASE_FOLDER/db/"
     cp db_config/* "$NEW_BASE_FOLDER/db/"
 }
 
