@@ -5,17 +5,17 @@ DOMAIN="peertube.social"
 OLD_SERVER="migration-user@$DOMAIN"
 OLD_BASE_FOLDER="/var/www/peertube"
 NEW_BASE_FOLDER="/peertube/volumes"
-RSYNC_PARAMS="-a --rsync-path=\"sudo rsync\" --bwlimit=5000"
 
 function sync-volumes {
     mkdir -p "$NEW_BASE_FOLDER"
     mkdir -p "$NEW_BASE_FOLDER/data/"
-    rsync $RSYNC_PARAMS "$OLD_SERVER:$OLD_BASE_FOLDER/storage/avatars/" "$NEW_BASE_FOLDER/data/avatars/"
-    rsync $RSYNC_PARAMS "$OLD_SERVER:$OLD_BASE_FOLDER/storage/cache/" "$NEW_BASE_FOLDER/data/cache/"
-    rsync $RSYNC_PARAMS "$OLD_SERVER:$OLD_BASE_FOLDER/storage/captions/" "$NEW_BASE_FOLDER/data/captions/"
-    rsync $RSYNC_PARAMS "$OLD_SERVER:$OLD_BASE_FOLDER/storage/previews/" "$NEW_BASE_FOLDER/data/previews/"
-    rsync $RSYNC_PARAMS "$OLD_SERVER:$OLD_BASE_FOLDER/storage/thumbnails/" "$NEW_BASE_FOLDER/data/thumbnails/"
-    rsync $RSYNC_PARAMS "$OLD_SERVER:$OLD_BASE_FOLDER/storage/torrents/" "$NEW_BASE_FOLDER/data/torrents/"
+    rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/avatars/" "$NEW_BASE_FOLDER/data/avatars/"
+    rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/cache/" "$NEW_BASE_FOLDER/data/cache/"
+    rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/captions/" "$NEW_BASE_FOLDER/data/captions/"
+    rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/previews/" "$NEW_BASE_FOLDER/data/previews/"
+    rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/thumbnails/" "$NEW_BASE_FOLDER/data/thumbnails/"
+    rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/torrents/" "$NEW_BASE_FOLDER/data/torrents/"
+    cp db_config/* "$NEW_BASE_FOLDER/db/"
 }
 
 if [ "$(whoami)" != "root" ]; then
@@ -46,7 +46,8 @@ fi
 
 # remove any existing volume files
 # https://stackoverflow.com/a/790245
-rm -r "$NEW_BASE_FOLDER/data/" | true
+rm -r "$NEW_BASE_FOLDER/data/" || true
+rm -r "$NEW_BASE_FOLDER/db/" || true
 # dont delete this because it would take too long to sync
 #rm -r "/mnt/external/*" | true
 
@@ -68,4 +69,5 @@ sync-volumes
 # TODO: also need to update domain in .env and traefik.toml (maybe with sed, or just set it before we migrate)
 docker-compose -f "$NEW_BASE_FOLDER/docker-compose.yaml" up -d
 
+# TODO: first check that docker-compose started without errors (eg database password working)
 echo "Now update the dns entries for $DOMAIN to point at the new server"

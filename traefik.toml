@@ -60,7 +60,7 @@ entryPoint = "https"
 # Domains list.
 #
 [[acme.domains]]
-  main = "testing.peertube.social"
+  main = "peertube.social"
 
 # Use a HTTP-01 acme challenge rather than TLS-SNI-01 challenge
 #
