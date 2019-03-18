@@ -16,9 +16,6 @@ function sync-volumes {
     rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/thumbnails/" "$NEW_BASE_FOLDER/data/thumbnails/"
     rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:$OLD_BASE_FOLDER/storage/torrents/" "$NEW_BASE_FOLDER/data/torrents/"
     rsync -a --rsync-path="sudo rsync" "$OLD_SERVER:/var/lib/postgresql/10/main/" "$NEW_BASE_FOLDER/db/"
-    cp db_config/* "$NEW_BASE_FOLDER/db/"
-    chown 70:115 volumes/db/ -R
-    chown 999:999 volumes/data/ -R
 }
 
 if [ "$(whoami)" != "root" ]; then
@@ -58,6 +55,9 @@ rm -r "$NEW_BASE_FOLDER/db/" || true
 # we do this while the old server is still running to reduce downtime
 sync-volumes
 
+# add database config files
+cp db_config/* "$NEW_BASE_FOLDER/db/"
+
 read -p "Initial copy complete. Do you want to complete the migration now? [y/N] " yn
 if [ "$yn" != "y" ]; then
     exit
@@ -69,8 +69,12 @@ ssh $OLD_SERVER sudo systemctl stop peertube
 # now that the old server is offline, we can do a final copy
 sync-volumes
 
+# fix permissions
+chown 70:115 volumes/db/ -R
+chown 999:999 volumes/data/ -R
+
 # TODO: also need to update domain in .env and traefik.toml (maybe with sed, or just set it before we migrate)
-docker-compose -f "$NEW_BASE_FOLDER/docker-compose.yaml" up -d
+docker-compose -f "/peertube/docker-compose.yaml" up -d
 
 # TODO: first check that docker-compose started without errors (eg database password working)
 echo "Now update the dns entries for $DOMAIN to point at the new server"
