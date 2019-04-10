@@ -1,0 +1,5 @@
+[peertube]
+root@testing.peertube.social domain=testing.peertube.social
+
+[all:vars]
+ansible_connection=ssh

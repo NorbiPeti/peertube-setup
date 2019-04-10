@@ -1,0 +1,63 @@
+---
+- hosts: all
+
+  # Install python if required
+  # https://www.josharcher.uk/code/ansible-python-connection-failure-ubuntu-server-1604/
+  gather_facts: False
+  pre_tasks:
+    - name: install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal python-setuptools)
+      register: output
+      changed_when: output.stdout != ""
+    - setup: # gather facts
+
+  tasks:
+  - name: install dependencies
+    apt:
+      pkg: ['docker-compose', 'docker.io']
+
+  - name: create peertube folder
+    file: path=/peertube/volumes/traefik/ state=directory mode=0755
+
+  - name:  add all template files
+    template: src={{item.src}} dest={{item.dest}}
+    with_items:
+      - { src: 'templates/docker-compose.yml', dest: '/peertube/docker-compose.yml' }
+      - { src: 'templates/env', dest: '/peertube/.env' }
+      - { src: 'templates/nginx.conf', dest: '/peertube/nginx.conf' }
+      - { src: 'templates/traefik.toml', dest: '/peertube/traefik.toml' }
+    vars:
+      postgres_password: "{{ lookup('password', 'passwords/{{ inventory_hostname }}/postgres chars=ascii_letters,digits') }}"
+
+  - name: set traefik data file and env file permissions
+    file:
+      path: "{{ item.path }}"
+      state: touch
+      mode: 0600
+      access_time: preserve
+      modification_time: preserve
+    with_items:
+      - { path: '/peertube/volumes/traefik/acme.json' }
+      - { path: '/peertube/.env' }
+
+  - name: enable and start docker service
+    systemd:
+      name: docker
+      enabled: yes
+      state: started
+
+  - name: start docker-compose
+    docker_service:
+      project_src: /peertube/
+      state: present
+      pull: yes
+
+  - name: fetch root password
+    shell: "docker-compose -f /peertube/docker-compose.yml logs peertube | grep 'User password' | awk 'NF{ print $NF }'"
+    register: password
+    changed_when: False
+
+  - name: print root password
+    debug:
+      msg: "The admin login is user=root, password={{ password.stdout }}"
+    when: password.stdout != ""

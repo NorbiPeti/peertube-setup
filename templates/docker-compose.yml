@@ -42,6 +42,9 @@ services:
       - ./volumes/data:/data
       - /mnt/external:/data-external
       - ./volumes/config:/config
+    environment:
+      - PEERTUBE_DB_USERNAME=${POSTGRES_USER}
+      - PEERTUBE_DB_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - postgres
       - redis
@@ -54,6 +57,9 @@ services:
       - ./volumes/db:/var/lib/postgresql/data
     labels:
       traefik.enable: "false"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: "always"
 
   redis:
