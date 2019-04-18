@@ -8,5 +8,5 @@ PEERTUBE_SMTP_FROM=info@{{ domain }}
 PEERTUBE_SMTP_TLS=false
 PEERTUBE_ADMIN_EMAIL=info@{{ domain }}
 
-POSTGRES_USER=peertube
+POSTGRES_USER=postgres
 POSTGRES_PASSWORD={{ postgres_password }}
