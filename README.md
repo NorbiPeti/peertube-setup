@@ -2,7 +2,7 @@
 
 ## Setup
 
-Configure your ssh connection in `inventory`.
+Copy `inventory.example` to `inventory`, and configure the hosts you want to work with.
 
 Install Python and Ansible:
 
@@ -11,8 +11,6 @@ Install Python and Ansible:
 
 Run the playbook:
 
-    ansible-playbook --become -K peertube.yml
-
-It will prompt for root password to escalate privileges through `sudo`.
+    ansible-playbook --become peertube.yml
 
 Note: If you run this on an existing server, make sure the file `passwords/*your-server*/postgres` exists and contains the correct password. Otherwise Ansible will change the password in Peertube, and it won't be able to connect to the database.

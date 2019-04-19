@@ -1,0 +1,8 @@
+[peertube]
+# define the username and hostname that you use for ssh connection, and specify the domain
+myuser@example.com domain=example.com
+# you can also use a host that is defined in your ssh config
+myserver domain=example.com
+
+[all:vars]
+ansible_connection=ssh
