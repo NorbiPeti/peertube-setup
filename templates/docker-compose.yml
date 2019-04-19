@@ -13,14 +13,14 @@ services:
       - ./volumes/traefik/acme.json:/etc/acme.json
       - ./traefik.toml:/traefik.toml
     depends_on:
-      - cache
+      - nginx
     restart: "always"
     # If you want to use the Traefik dashboard, you should expose it on a 
     # subdomain with HTTPS and authentification:
     # https://medium.com/@xavier.priour/secure-traefik-dashboard-with-https-and-password-in-docker-5b657e2aa15f
     # https://github.com/containous/traefik/issues/880#issuecomment-310301168
 
-  cache:
+  nginx:
     image: nginx:1.15-alpine
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
