@@ -15,6 +15,9 @@ services:
     depends_on:
       - nginx
     restart: "always"
+    # Required for view counter to work correctly
+    # https://github.com/Chocobozzz/PeerTube/issues/1643#issuecomment-464789666
+    network_mode: "host"
     # If you want to use the Traefik dashboard, you should expose it on a 
     # subdomain with HTTPS and authentification:
     # https://medium.com/@xavier.priour/secure-traefik-dashboard-with-https-and-password-in-docker-5b657e2aa15f
