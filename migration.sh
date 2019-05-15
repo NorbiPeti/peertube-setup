@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# This script can migrate an existing default Peertube installation to docker-compose+ansible.
+# Use at your own risk.
+
 DOMAIN="peertube.social"
 OLD_SERVER="migration-user@$DOMAIN"
 OLD_BASE_FOLDER="/var/www/peertube"
