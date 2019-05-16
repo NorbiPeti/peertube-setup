@@ -7,6 +7,9 @@ There is also a migration script to migrate from the
 to this setup. Use it at your own risk, and make sure to test and backup
 before doing this migration.
 
+This project is based on the
+[Peertube docker-compose example](https://github.com/Chocobozzz/PeerTube/blob/develop/support/doc/docker.md).
+
 You can contact me on the Fediverse about this project:
 [https://radical.town/@felix](https://radical.town/@felix).
 
