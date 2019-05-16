@@ -2,6 +2,14 @@
 
 This repo lets you easily setup a Peertube server based on docker-compose.
 
+There is also a migration script to migrate from the
+[default Peertube setup](https://github.com/Chocobozzz/PeerTube/blob/develop/support/doc/production.md)
+to this setup. Use it at your own risk, and make sure to test and backup
+before doing this migration.
+
+You can contact me on the Fediverse about this project:
+[https://radical.town/@felix](https://radical.town/@felix).
+
 ## Features
 
 - automatic Let's Encrypt certificate handling via Traefik
