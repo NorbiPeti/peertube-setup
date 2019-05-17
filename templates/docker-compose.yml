@@ -39,8 +39,6 @@ services:
     image: chocobozzz/peertube:v1.2.1-stretch
     env_file:
       - .env
-    labels:
-      traefik.enable: "false"
     volumes:
       - ./volumes/data:/data
       - /mnt/external:/data-external
@@ -58,8 +56,6 @@ services:
     image: postgres:10-alpine
     volumes:
       - ./volumes/db:/var/lib/postgresql/data
-    labels:
-      traefik.enable: "false"
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -69,14 +65,10 @@ services:
     image: redis:5-alpine
     volumes:
       - ./volumes/redis:/data
-    labels:
-      traefik.enable: "false"
     restart: "always"
 
   postfix:
     image: mwader/postfix-relay
     environment:
       - POSTFIX_myhostname=${PEERTUBE_WEBSERVER_HOSTNAME}
-    labels:
-      traefik.enable: "false"
     restart: "always"
