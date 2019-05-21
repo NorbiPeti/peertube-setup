@@ -36,7 +36,7 @@ services:
     restart: "always"
 
   peertube:
-    image: chocobozzz/peertube:v1.2.1-stretch
+    image: chocobozzz/peertube:v1.3.0-rc.1-stretch
     env_file:
       - .env
     volumes:
@@ -72,3 +72,10 @@ services:
     environment:
       - POSTFIX_myhostname=${PEERTUBE_WEBSERVER_HOSTNAME}
     restart: "always"
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+      - subnet:  172.18.0.0/16
