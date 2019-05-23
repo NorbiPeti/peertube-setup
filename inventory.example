@@ -1,8 +1,8 @@
 [peertube]
 # define the username and hostname that you use for ssh connection, and specify the domain
-myuser@example.com domain=example.com
+myuser@example.com domain=example.com cache_size_gb=15
 # you can also use a host that is defined in your ssh config
-myserver domain=example.com
+myserver domain=example.com cache_size_gb=15
 
 [all:vars]
 ansible_connection=ssh
