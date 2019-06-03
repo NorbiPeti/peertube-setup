@@ -26,13 +26,6 @@ defaultEntryPoints = ["http", "https"]
       "TLS_RSA_WITH_AES_256_GCM_SHA384",
       "TLS_RSA_WITH_AES_256_CBC_SHA"
     ]
-    FrameDeny = false # here we don't want to deny frames since we have an embed
-    STSIncludeSubdomains = true
-    STSSeconds = 315360000
-    STSPreload = true
-    ContentTypeNosniff = true
-    BrowserXssFilter = true
-
 
 # Enable ACME (Let's Encrypt): automatic SSL.
 [acme]
@@ -75,4 +68,6 @@ entryPoint = "https"
   entryPoint = "http"
 
 [docker]
-exposedByDefault = false
+endpoint = "unix:///var/run/docker.sock"
+watch = true
+exposedbydefault = false
