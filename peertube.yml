@@ -40,6 +40,13 @@
       - { path: '/peertube/volumes/traefik/acme.json' }
       - { path: '/peertube/.env' }
 
+  - name: add peertube config
+    get_url:
+      url: https://github.com/Chocobozzz/PeerTube/blob/develop/support/docker/production/config/production.yaml
+      dest: /peertube/volumes/config/production.yaml
+      mode: 0644
+      force: no
+
   - name: enable and start docker service
     systemd:
       name: docker
