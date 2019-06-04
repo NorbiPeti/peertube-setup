@@ -54,7 +54,7 @@
       state: started
 
   - name: start docker-compose
-    docker_service:
+    docker_compose:
       project_src: /peertube/
       state: present
       pull: yes
