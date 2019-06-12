@@ -41,8 +41,8 @@ services:
       - .env
     volumes:
       - ./volumes/data:/data
-      - /mnt/external:/data-external
       - ./volumes/config:/config
+      - ./volumes-large:/data-external
     environment:
       - PEERTUBE_DB_USERNAME=${POSTGRES_USER}
       - PEERTUBE_DB_PASSWORD=${POSTGRES_PASSWORD}
