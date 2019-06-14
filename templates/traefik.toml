@@ -34,7 +34,7 @@ defaultEntryPoints = ["http", "https"]
 #
 # Required
 #
-email = "me@nutomic.com"
+email = "{{ letsencrypt_contact_email }}"
 
 # File or key used for certificates storage.
 #
