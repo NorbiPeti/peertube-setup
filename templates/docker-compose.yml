@@ -27,6 +27,7 @@ services:
     image: nginx:1.15-alpine
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./volumes-large:/data-external:ro
     labels:
       - traefik.enable=true
       - traefik.frontend.rule=Host:${PEERTUBE_WEBSERVER_HOSTNAME}
