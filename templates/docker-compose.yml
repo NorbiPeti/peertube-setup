@@ -2,42 +2,22 @@ version: "3.3"
 
 services:
 
-  traefik:
-    image: traefik:1.7-alpine
-    command: --docker # Tells Træfik to listen to docker
+  nginx:
+    image: nginx:1.17-alpine
     ports:
       - "80:80"     # The HTTP port
       - "443:443"   # The HTTPS port
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./volumes/traefik/acme.json:/etc/acme.json
-      - ./traefik.toml:/traefik.toml
-    depends_on:
-      - nginx
-    restart: "always"
-    # Required for view counter to work correctly
-    # https://github.com/Chocobozzz/PeerTube/issues/1643#issuecomment-464789666
-    network_mode: "host"
-    # If you want to use the Traefik dashboard, you should expose it on a 
-    # subdomain with HTTPS and authentification:
-    # https://medium.com/@xavier.priour/secure-traefik-dashboard-with-https-and-password-in-docker-5b657e2aa15f
-    # https://github.com/containous/traefik/issues/880#issuecomment-310301168
-
-  nginx:
-    image: nginx:1.15-alpine
-    volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./volumes/certbot/:/var/www/certbot/
+      - /etc/letsencrypt/:/etc/letsencrypt/:ro
       - ./volumes-large:/data-external:ro
-    labels:
-      - traefik.enable=true
-      - traefik.frontend.rule=Host:${PEERTUBE_WEBSERVER_HOSTNAME}
-      - traefik.port=9000
     depends_on:
       - peertube
     restart: "always"
 
   peertube:
-    image: chocobozzz/peertube:v1.3.0-rc.2-stretch
+    image: chocobozzz/peertube:v1.3.1-stretch
     env_file:
       - .env
     volumes:

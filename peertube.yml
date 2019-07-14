@@ -16,10 +16,13 @@
   tasks:
   - name: install dependencies
     apt:
-      pkg: ['docker-compose', 'docker.io']
+      pkg: ['docker-compose', 'docker.io', 'certbot']
 
   - name: create peertube folder
-    file: path=/peertube/volumes/traefik/ state=directory mode=0755
+    file: path={{item.path}} state=directory
+    with_items:
+      - { path: '/peertube/volumes/' }
+      - { path: '/peertube/volumes/certbot/' }
 
   - name:  add all template files
     template: src={{item.src}} dest={{item.dest}}
@@ -27,20 +30,16 @@
       - { src: 'templates/docker-compose.yml', dest: '/peertube/docker-compose.yml' }
       - { src: 'templates/env', dest: '/peertube/.env' }
       - { src: 'templates/nginx.conf', dest: '/peertube/nginx.conf' }
-      - { src: 'templates/traefik.toml', dest: '/peertube/traefik.toml' }
     vars:
       postgres_password: "{{ lookup('password', 'passwords/{{ inventory_hostname }}/postgres chars=ascii_letters,digits') }}"
 
-  - name: set traefik data file and env file permissions
+  - name: set env file permissions
     file:
-      path: "{{ item.path }}"
+      path: "/peertube/.env"
       state: touch
       mode: 0600
       access_time: preserve
       modification_time: preserve
-    with_items:
-      - { path: '/peertube/volumes/traefik/acme.json' }
-      - { path: '/peertube/.env' }
 
   - name: add peertube config
     get_url:
@@ -48,6 +47,11 @@
       dest: /peertube/volumes/config/production.yaml
       mode: 0644
       force: no
+
+  - name: request letsencrypt certificates
+    command: certbot certonly --standalone --agree-tos -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
+    args:
+      creates: '/etc/letsencrypt/live/{{domain}}/privkey.pem'
 
   - name: enable and start docker service
     systemd:
@@ -60,6 +64,13 @@
       project_src: /peertube/
       state: present
       pull: yes
+
+  - name: renew certbot certificates
+    cron:
+      special_time=daily
+      name=certbot-renew
+      user=root
+      job="certbot certonly --webroot --webroot-path=/peertube/volumes/certbot/ -d '{{ domain }}' --deploy-hook 'docker-compose -f /peertube/docker-compose.yml exec nginx nginx -s reload'"
 
   - name: fetch root password
     shell: "docker-compose -f /peertube/docker-compose.yml logs peertube | grep 'User password' | awk 'NF{ print $NF }'"
