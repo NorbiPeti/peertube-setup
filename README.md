@@ -11,11 +11,12 @@ This project is based on the
 [Peertube docker-compose example](https://github.com/Chocobozzz/PeerTube/blob/develop/support/doc/docker.md).
 
 You can contact me on the Fediverse about this project:
-[https://radical.town/@felix](https://radical.town/@felix).
+[@felix@radical.town](https://radical.town/@felix).
 
 ## Features
 
-- automatic Let's Encrypt certificate handling via Traefik
+- easy, automatic setup
+- integrated Let's Encrypt certificate handling
 - file caching with nginx (to limit backend access and Peertube CPU usage)
 - email sending works out of the box
 
@@ -27,7 +28,7 @@ Copy `inventory.example` to `inventory`, and configure the hosts you want to wor
 
 Install Python and Ansible on your local machine:
 
-    apt install python
+    apt install python2-pip
     pip2 install ansible
 
 Run the playbook:
