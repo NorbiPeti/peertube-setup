@@ -33,7 +33,7 @@
     yum:
       name: lvm2
       state: latest
-  
+
   - name: Add Docker repo
     get_url:
       url: https://download.docker.com/linux/centos/docker-ce.repo
@@ -58,10 +58,10 @@
       name: python-pip
       state: latest
     become: yes
-  
+
   - name: Install Docker Compose
     command: "pip install docker-compose"
-  
+
   - name: Install certbot
     yum:
       name: certbot
