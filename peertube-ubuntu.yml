@@ -42,12 +42,14 @@
       access_time: preserve
       modification_time: preserve
 
-  - name: add peertube config
-    get_url:
-      url: https://github.com/Chocobozzz/PeerTube/blob/develop/support/docker/production/config/production.yaml
-      dest: /peertube/volumes/config/production.yaml
-      mode: 0644
-      force: no
+  # NOTE: disabled because `force: no` is broken for get_url
+  # https://github.com/ansible/ansible/issues/64016
+  #- name: add peertube config
+  #  get_url:
+  #    url: https://raw.githubusercontent.com/Chocobozzz/PeerTube/develop/support/docker/production/config/production.yaml
+  #    dest: /peertube/volumes/config/production.yaml
+  #    mode: 0644
+  #    force: no
 
   - name: request letsencrypt certificates
     command: certbot certonly --standalone --agree-tos -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
