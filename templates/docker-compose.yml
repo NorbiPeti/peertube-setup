@@ -17,7 +17,7 @@ services:
     restart: "always"
 
   peertube:
-    image: chocobozzz/peertube:v2.1.0-buster
+    image: chocobozzz/peertube:v2.1.1-buster
     env_file:
       - .env
     volumes:
