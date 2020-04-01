@@ -19,37 +19,39 @@
     apt:
       pkg: ['docker-compose', 'docker.io', 'certbot']
 
+  - name: copy docker config
+    copy: src='files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
+
   - name: create peertube folder
     file: path={{item.path}} state=directory
     with_items:
       - { path: '/peertube/volumes/' }
       - { path: '/peertube/volumes/certbot/' }
 
+  - name: get latest peertube version from github
+    uri:
+      url: https://api.github.com/repos/Chocobozzz/PeerTube/releases/latest
+      return_content: true
+    register: peertube_version_response
+    check_mode: no
+
+  - debug:
+      msg: "Using Peertube version {{ peertube_version_response.json.tag_name }}"
+
+  - name: check to make sure the specified tag exists
+    docker_image:
+      name: "chocobozzz/peertube:{{ peertube_version_response.json.tag_name }}-buster"
+      source: pull
+
   - name:  add all template files
-    template: src={{item.src}} dest={{item.dest}}
+    template: src={{item.src}} dest={{item.dest}} mode={{item.mode}}
     with_items:
-      - { src: 'templates/docker-compose.yml', dest: '/peertube/docker-compose.yml' }
-      - { src: 'templates/env', dest: '/peertube/.env' }
-      - { src: 'templates/nginx.conf', dest: '/peertube/nginx.conf' }
+      - { src: 'templates/docker-compose.yml.j2', dest: '/peertube/docker-compose.yml', mode: '0644' }
+      - { src: 'templates/nginx.conf.j2', dest: '/peertube/nginx.conf', mode: '0644' }
+      - { src: 'templates/env.j2', dest: '/peertube/.env', mode: '0600' }
+      - { src: 'templates/peertube-production.yaml.j2', dest: '/peertube/volumes/config/production.yaml', mode: '0600' }
     vars:
-      postgres_password: "{{ lookup('password', 'passwords/{{ inventory_hostname }}/postgres chars=ascii_letters,digits') }}"
-
-  - name: set env file permissions
-    file:
-      path: "/peertube/.env"
-      state: touch
-      mode: 0600
-      access_time: preserve
-      modification_time: preserve
-
-  # NOTE: disabled because `force: no` is broken for get_url
-  # https://github.com/ansible/ansible/issues/64016
-  #- name: add peertube config
-  #  get_url:
-  #    url: https://raw.githubusercontent.com/Chocobozzz/PeerTube/develop/support/docker/production/config/production.yaml
-  #    dest: /peertube/volumes/config/production.yaml
-  #    mode: 0644
-  #    force: no
+      peertube_version: "{{ peertube_version_response.json.tag_name }}"
 
   - name: request letsencrypt certificates
     command: certbot certonly --standalone --agree-tos -d '{{ domain }}' -m '{{ letsencrypt_contact_email }}'
@@ -68,19 +70,11 @@
       state: present
       pull: yes
 
+  # TODO: might need to restart peertube if production.yaml was changed
+
   - name: renew certbot certificates
     cron:
       special_time=daily
       name=certbot-renew
       user=root
       job="certbot certonly --webroot --webroot-path=/peertube/volumes/certbot/ -d '{{ domain }}' --deploy-hook 'docker-compose -f /peertube/docker-compose.yml exec nginx nginx -s reload'"
-
-  - name: fetch root password
-    shell: "docker-compose -f /peertube/docker-compose.yml logs peertube | grep 'User password' | awk 'NF{ print $NF }'"
-    register: password
-    changed_when: False
-
-  - name: print root password
-    debug:
-      msg: "The admin login is user=root, password={{ password.stdout }}"
-    when: password.stdout != ""

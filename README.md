@@ -1,4 +1,4 @@
-# Peertube setup with Ansible and Docker-Compose
+# peertube.social
 
 This repo lets you easily setup a Peertube server based on docker-compose.
 

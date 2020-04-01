@@ -1,0 +1,103 @@
+listen:
+  hostname: '0.0.0.0'
+  port: 9000
+
+# Correspond to your reverse proxy "listen" configuration
+webserver:
+  https: true
+  hostname: 'peertube.social'
+  port: 443
+
+# Proxies to trust to get real client IP
+# If you run PeerTube just behind a local proxy (nginx), keep 'loopback'
+# If you run PeerTube behind a remote proxy, add the proxy IP address (or subnet)
+trust_proxy:
+  - 'loopback'
+  - 'linklocal'
+  - 'uniquelocal'
+
+# Your database name will be "peertube"+database.suffix
+database:
+  hostname: 'postgres'
+  port: 5432
+  suffix: ''
+
+# Redis server for short time storage
+redis:
+  hostname: 'redis'
+  port: 6379
+  auth: null
+  db: 0
+
+# SMTP server to send emails
+smtp:
+  hostname: postfix
+  port: 25 # If you use StartTLS: 587
+  username: null
+  password: null
+  tls: true # If you use StartTLS: false
+  disable_starttls: false
+  ca_file: null # Used for self signed certificates
+  from_address: 'info@peertube.social'
+
+email:
+  body:
+    signature: "The PeerTube.social team"
+  subject:
+    prefix: "[PeerTube]"
+
+# From the project root directory
+storage:
+  tmp: '/data/tmp/' # Used to download data (imports etc), store uploaded files before processing...
+  avatars: '/data/avatars/'
+  videos: '/data-external/videos/'
+  redundancy: '/data-external/redundancy/'
+  logs: '/data/logs/'
+  previews: '/data/previews/'
+  thumbnails: '/data/thumbnails/'
+  torrents: '/data/torrents/'
+  captions: '/data/captions/'
+  cache: '/data/cache/'
+  streaming_playlists: '/data/streaming-playlists/'
+  plugins: '/data/plugins/'
+
+log:
+  level: 'warning' # debug/info/warning/error
+  anonymizeIP: true
+
+search:
+  remote_uri: # Add ability to fetch remote videos/actors by their URI, that may not be federated with your instance
+    users: false
+    anonymous: false
+
+trending:
+  videos:
+    interval_days: 7 # Compute trending videos for the last x days
+
+# Cache remote videos on your server, to help other instances to broadcast the video
+# You can define multiple caches using different sizes/strategies
+# Once you have defined your strategies, choose which instances you want to cache in admin -> manage follows -> following
+redundancy:
+  videos:
+    check_interval: '1 hour' # How often you want to check new videos to cache
+    strategies:
+      -
+        size: '20GB'
+        # Minimum time the video must remain in the cache. Only accept values > 10 hours (to not overload remote instances)
+        min_lifetime: '12 hours'
+        strategy: 'most-views' # Cache videos that have the most views
+      -
+        size: '20GB'
+        # Minimum time the video must remain in the cache. Only accept values > 10 hours (to not overload remote instances)
+        min_lifetime: '12 hours'
+        strategy: 'trending' # Cache trending videos
+      -
+        size: '0GB'
+        # Minimum time the video must remain in the cache. Only accept values > 10 hours (to not overload remote instances)
+        min_lifetime: '24 hours'
+        strategy: 'recently-added' # Cache recently added videos
+        min_views: 10 # Having at least x views
+
+csp:
+  enabled: true
+  report_only: true

@@ -1,3 +1,4 @@
 passwords/
 peertube.retry
-inventory
+prod
+.idea/
