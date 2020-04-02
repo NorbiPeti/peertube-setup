@@ -2,6 +2,8 @@
 
 This repo contains the Ansible playbook and configuration used on [peertube.social](https://peertube.social).
 
+Use this repo to report any technical issues with peertube.social.
+
 ## Usage
 
 Just run the following command:
