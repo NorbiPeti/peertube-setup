@@ -18,14 +18,18 @@
     apt:
       pkg: ['docker-compose', 'docker.io', 'certbot']
 
-  - name: copy docker config
-    copy: src='files/docker-daemon.json' dest='/etc/docker/daemon.json' mode='0644'
-
-  - name: create peertube folder
+  - name: create peertube folders
     file: path={{item.path}} state=directory
     with_items:
       - { path: '/peertube/volumes/' }
       - { path: '/peertube/volumes/certbot/' }
+      - { path: '/peertube/volumes/config/' }
+
+  - name: copy docker config
+    copy: src={{item.src}} dest={{item.dest}} mode='0644'
+    with_items:
+      - { src: 'files/docker-daemon.json', dest: '/etc/docker/daemon.json' }
+      - { src: 'files/local-production.json', dest: '/peertube/volumes/config/local-production.json' }
 
   - name: get latest peertube version from github
     uri:
