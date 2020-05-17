@@ -25,11 +25,13 @@
       - { path: '/peertube/volumes/certbot/' }
       - { path: '/peertube/volumes/config/' }
 
-  - name: copy docker config
-    copy: src={{item.src}} dest={{item.dest}} mode='0644'
+  - name: copy files
+    copy: src={{item.src}} dest={{item.dest}} mode={{item.mode}} force={{item.force}}
     with_items:
-      - { src: 'files/docker-daemon.json', dest: '/etc/docker/daemon.json' }
-      - { src: 'files/local-production.json', dest: '/peertube/volumes/config/local-production.json' }
+      - { src: 'files/docker-daemon.json', dest: '/etc/docker/daemon.json', mode: '0644', force: 'yes' }
+      - { src: 'files/local-production.json', dest: '/peertube/volumes/config/local-production.json', mode: '0644', force: 'yes' }
+      - { src: 'files/send-email-to-users.bash', dest: '/peertube/send-email-to-users.bash', mode: '755', force: 'yes' }
+      - { src: 'files/email-template.txt', dest: '/peertube/email-template.txt', mode: '0644', force: 'no' }
 
   - name: get latest peertube version from github
     uri:

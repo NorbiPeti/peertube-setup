@@ -1,0 +1,4 @@
+subject:email to all users
+from:info@your-instance.com
+
+this is a test email.
