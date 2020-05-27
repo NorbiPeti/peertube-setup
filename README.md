@@ -6,9 +6,12 @@ Use this repo to report any technical issues with peertube.social.
 
 ## Usage
 
-Just run the following command:
+Just run one of the following commands:
 ```
-ansible-playbook peertube.yml --ask-vault-pass
+# deploy to test.peertube.social
+ansible-playbook -i test peertube.yml --ask-vault-pass
+# deploy to peertube.social
+ansible-playbook -i prod peertube.yml --ask-vault-pass
 ```
 
 If you want to use this configuration for your own instance, you need to fork this repo and enter your own domain in
