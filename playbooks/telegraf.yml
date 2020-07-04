@@ -1,0 +1,45 @@
+---
+- hosts: all
+
+  tasks:
+  # TODO: peertube uses docker nginx container
+  #- name: copy nginx files
+  #  copy:
+  #    src: '../files/nginx_status.conf'
+  #    dest: '/etc/nginx/sites-enabled/nginx_status.conf'
+
+  - name: add telegraf apt key
+    apt_key:
+      keyserver: https://repos.influxdata.com/influxdb.key
+      id: 684A14CF2582E0C5
+      state: present
+
+  - name: add telegraf apt repository
+    apt_repository:
+      # Note: we need to adjust this manually for different ubuntu versions
+      repo: 'deb https://repos.influxdata.com/ubuntu bionic stable'
+      state: present
+      filename: influxdb
+      update_cache: yes
+
+  - name: add telegraf to docker group
+    action: user name=telegraf groups="docker" append=yes
+
+  - name: install telegraf
+    apt:
+      name: telegraf
+      state: present
+
+  - name:  add telegraf config
+    template:
+      src: '../templates/telegraf.conf.j2'
+      dest: '/etc/telegraf/telegraf.conf'
+      owner: telegraf
+      group: telegraf
+      mode: '0600'
+
+  - name: start and enable telegraf service
+    systemd:
+      state: reloaded
+      name: telegraf
+      enabled: true
